@@ -1,0 +1,20 @@
+{
+ "resource": "bdtopo-osrm",
+ "resourceVersion": "2026-09-26",
+ "start": "1.88,47.85",
+ "end": "1.909208,47.90328",
+ "profile": "car",
+ "optimization": "fastest",
+ "crs": "EPSG:4326",
+ "distanceUnit": "kilometer",
+ "timeUnit": "minute",
+ "bbox": [
+  1.846373,
+  47.719748,
+  1.92219,
+  47.903318
+ ],
+ "distance": 29.403,
+ "duration": 32.835,
+ "constraints": []
+}

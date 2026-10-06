@@ -1,0 +1,35 @@
+{
+ "type": "FeatureCollection",
+ "features": [
+  {
+   "type": "Feature",
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     2.045547,
+     49.04227
+    ]
+   },
+   "properties": {
+    "label": "Cergy",
+    "score": 0.9548663636363637,
+    "id": "95127",
+    "banId": "b6fdd2d5-196d-4613-8cc5-3753241ee2a6",
+    "type": "municipality",
+    "name": "Cergy",
+    "postcode": "95000",
+    "citycode": "95127",
+    "x": 630219.48,
+    "y": 6882909.37,
+    "population": 70906,
+    "city": "Cergy",
+    "context": "95, Val-d'Oise, Île-de-France",
+    "importance": 0.50353,
+    "depcode": "95",
+    "municipality": "Cergy",
+    "_type": "address"
+   }
+  }
+ ],
+ "query": "95000 Cergy"
+}

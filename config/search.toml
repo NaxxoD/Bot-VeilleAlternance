@@ -1,0 +1,129 @@
+[api]
+base_url = "https://api.apprentissage.beta.gouv.fr/api"
+pause_entre_appels = 1.1   # secondes ; limite API = 60 appels/min
+timeout = 60               # secondes
+
+[stockage]
+# Réponses brutes de l'API (une par département et par lancement), sur le HDD
+# interne. Chemin absolu, ou relatif à la racine du projet (défaut : data/raw).
+dossier_raw = "data/raw"
+
+[recherche]
+departements = ["75", "77", "78", "91", "92", "93", "94", "95", "45", "41"]
+# Plages de codes ROME 4.0, bornes incluses (voir étude : balayage du 2026-09-25)
+rome_plages = [["M1801", "M1899"], ["I1401", "I1415"]]
+
+[filtres]
+types_contrat = ["Apprentissage"]
+# Règles de comparaison : sans accents ni majuscules, au début d'un mot
+# ("reseau" trouve "réseaux", "ssi" trouve "SSI" mais pas "assistant").
+# Une offre est retenue si son titre contient un mot de mots_cles_titre
+# OU si sa description contient un mot de mots_cles_description.
+
+# Cherchés dans le titre : les métiers visés
+mots_cles_titre = [
+  "administrateur systeme", "administrateur reseau", "admin sys", "sysadmin",
+  "systemes et reseaux", "systeme et reseau",
+  "technicien systeme", "technicien reseau", "technicien infrastructure",
+  "technicien informatique", "technicien support", "ingenieur systeme",
+  "support informatique", "support it", "helpdesk", "help desk", "service desk",
+  "infrastructure", "informatique",
+  "devops", "cybersecurite", "cyber", "securite informatique", "ssi", "sic",
+  # "reseau" seul ramenait « réseaux sociaux », « VRD », « réseau ferroviaire »...
+  "reseau informatique", "reseaux informatiques", "equipe reseau",
+]
+# Titres de développement : cherchés comme mots_cles_titre, et ils classent l'offre dans
+# le vivier « dev » du rapport (toute autre offre retenue = vivier « infra »).
+# « developpeu » couvre développeur/développeuse ; « developpement » seul ramènerait
+# tous les « responsable développement / business developer ».
+mots_cles_dev = [
+  "developpeu", "developpement logiciel", "developpement web", "developpement informatique",
+  "developpement applicatif", "full stack", "fullstack", "front end", "front-end",
+  "frontend", "back end", "back-end", "backend", "ingenieur logiciel", "architecte logiciel",
+  "concepteur d'application", "concepteur d’application", "concepteur logiciel",
+]
+# Cherchés dans la description : termes techniques précis seulement
+# (un mot générique comme "systeme" ramène trop de bruit)
+mots_cles_description = [
+  "linux", "windows server", "active directory", "cisco", "vmware", "hyper-v",
+  "tcp/ip", "vlan", "routeur", "protocoles de routage", "commutation", "firewall", "pare-feu", "powershell", "ansible",
+  "docker", "kubernetes", "glpi", "dhcp", "maintien en condition operationnelle",
+]
+# Cherchés dans le titre : une offre qui en contient un est écartée
+mots_exclus_titre = [
+  "marketing", "commercial", "business developer", "graphiste", "comptab",
+  "electromenager", "ressources humaines", "juridique", "cvc",
+  "sociaux", "community manager", "vrd", "voiries", "ferroviaire", "electrique",
+  "franchise", "vendeur", "foncier", "immobilier",
+]
+
+[filtres_ecoles]
+# Offres publiées par des écoles / organismes de formation (qui recrutent des élèves,
+# pas des alternants pour une entreprise) : écartées, puisque l'école est déjà trouvée.
+# Code NAF de l'employeur commençant par ces préfixes (85 = enseignement)
+naf_prefixes = ["85"]
+# Organismes sans code NAF dans les offres, écartés par leur nom
+organismes_exclus = ["ISCOD", "IMC ALTERNANCE", "GOTOLEARN"]
+
+[france_travail]
+# Source France Travail directe (identifiants FT_CLIENT_ID / FT_CLIENT_SECRET dans .env)
+actif = true
+nature_contrat = "E2"   # E2 = apprentissage, FS = professionnalisation
+
+[filtres_recruteurs]
+# Candidatures spontanées : codes NAF (secteur) retenus, par préfixe
+# ("62" couvre 62.01Z, 62.02A, 62.02B, 62.03Z, 62.09Z). Liste vide = pas de filtre.
+naf_prefixes = [
+  "62",     # services informatiques (conseil, infogérance, maintenance, programmation)
+  "46.51",  # commerce de gros de matériel informatique (intégrateurs, revendeurs)
+  "47.41",  # boutiques informatiques
+  "95.11",  # réparation d'ordinateurs
+  "26.20",  # fabrication de matériel informatique
+  "77.33",  # location de matériel informatique
+  "63.11",  # hébergement, datacenters
+  "61",     # télécommunications
+  "58.29",  # édition de logiciels (dont systèmes et réseaux)
+]
+# Tailles d'entreprise écartées : moins de 10 salariés, rarement un tuteur
+# disponible ni un service informatique ("0-0" = aucun salarié)
+tailles_exclues = ["0-0", "1-2", "3-5", "6-9"]
+# Classées en premier dans le rapport : métiers où l'alternant est au cœur de
+# l'activité (services informatiques, hébergement, télécoms) ; puis par trajet
+naf_coeur = ["62", "63.11", "61"]
+
+[historique]
+# Offre « disparue » : absente d'au moins N lancements depuis sa dernière vue
+# (un jour sans lancement, PC éteint, ne compte pas). Affichée N jours au rapport.
+lancements_avant_disparition = 2
+jours_disparues = 14
+
+[trajet]
+# Temps de trajet depuis le domicile ; au-delà du seuil, l'offre passe dans la
+# section « trop loin » du rapport. Spec : docs/specs/2026-09-28-filtre-trajet-design.md
+actif = true
+
+[trajet.transports]
+# Île-de-France, transports en commun (API PRIM, jeton PRIM_API_KEY dans .env).
+# Points de départ [longitude, latitude] : le plus court des deux est gardé.
+departs = [
+  [2.347, 48.859],  # départ A (exemple)
+  [2.32, 48.865],   # départ B (exemple)
+]
+heure_depart = "08:00"    # prochain jour ouvré
+max_minutes = 45
+
+[trajet.voiture]
+# Loiret et Loir-et-Cher, voiture (API IGN, sans trafic ; l'IGN compte large sur
+# les petites routes, seuil calé sur Saran 27 min / Châteauneuf-sur-Loire 45 min)
+departements = ["45", "41"]
+depart = [1.88, 47.85]  # départ Loiret (exemple)
+max_minutes = 45
+
+[[rapport.zones]]
+# Un bloc par zone dans le rapport ; un département hors zone va dans « Autres »
+nom = "Île-de-France"
+departements = ["75", "77", "78", "91", "92", "93", "94", "95"]
+
+[[rapport.zones]]
+nom = "Loiret"
+departements = ["45", "41"]

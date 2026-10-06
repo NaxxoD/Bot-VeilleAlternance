@@ -1,0 +1,32 @@
+{
+ "journeys": [
+  {
+   "type": "best",
+   "duration": 4269,
+   "departure_date_time": "20260929T080121",
+   "arrival_date_time": "20260929T091230",
+   "nb_transfers": 1
+  },
+  {
+   "type": "comfort",
+   "duration": 4592,
+   "departure_date_time": "20260929T080121",
+   "arrival_date_time": "20260929T091753",
+   "nb_transfers": 0
+  },
+  {
+   "type": "rapid",
+   "duration": 4877,
+   "departure_date_time": "20260929T081301",
+   "arrival_date_time": "20260929T093418",
+   "nb_transfers": 1
+  },
+  {
+   "type": "less_fallback_walk",
+   "duration": 6208,
+   "departure_date_time": "20260929T080121",
+   "arrival_date_time": "20260929T094449",
+   "nb_transfers": 2
+  }
+ ]
+}
